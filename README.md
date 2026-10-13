@@ -14,6 +14,17 @@ Type this line at the Claude Code prompt in a terminal:
 
 Type `y` to add the marketplace, then select the user scope. The mod starts immediately.
 
+### Ask Claude to install it
+
+Tell Claude Code: "Install the english-coach plugin from github.com/franc1sc0sv/english-coach". Claude runs:
+
+```
+claude plugin marketplace add franc1sc0sv/english-coach
+claude plugin install english-coach@english-coach --scope user
+```
+
+Then run `/reload-plugins`, or start a new session.
+
 ## Use
 
 - `/english-coach` turns the tips on or off.
