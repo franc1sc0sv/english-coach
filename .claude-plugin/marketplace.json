@@ -1,0 +1,5 @@
+{
+  "name": "english-coach",
+  "owner": { "name": "franc1sc0sv" },
+  "plugins": [{ "name": "english-coach", "source": "./" }]
+}

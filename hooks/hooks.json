@@ -1,0 +1,4 @@
+{
+  "description": "English tips above the prompt, judged by Haiku after each long prompt",
+  "modules": ["./register.tsx"]
+}
