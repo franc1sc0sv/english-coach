@@ -122,7 +122,7 @@ test("reviews a long prompt with Haiku and shows the tips above the prompt", asy
   await reviewed(1);
   await settle($);
 
-  expect(requests[0]!.model).toBe("haiku");
+  expect(requests[0]!.model).toBe("claude-haiku-5-5");
   expect(JSON.stringify(requests[0]!.prompt)).toContain("researchment");
 
   const drawn = textOf(await $.ui.render(band));

@@ -8,7 +8,7 @@ const COMMAND = "english-coach";
 
 const ENABLED_KEY = "enabled";
 
-const MODEL = "haiku";
+const MODEL = "claude-haiku-5-5";
 
 const KIND_LABELS: Record<TipKind, string> = {
   grammar: "Grammar",

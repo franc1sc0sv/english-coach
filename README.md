@@ -1,6 +1,8 @@
 # english-coach
 
-A Claude Code mod that reviews the English of each long prompt you send. Haiku checks the prompt and shows the fixes and a better version above the prompt box. You can copy the better version.
+A Claude Code mod that reviews the English of each long prompt you send. Haiku 5.5 checks the prompt and shows the fixes and a better version above the prompt box. You can copy the better version.
+
+![English tips above the prompt](docs/english-tips.png)
 
 ## Install
 
@@ -15,7 +17,7 @@ Type `y` to add the marketplace, then select the user scope. The mod starts imme
 ## Use
 
 - `/english-coach` turns the tips on or off.
-- Each review is one Haiku call on your own usage.
+- Each review is one Haiku 5.5 call on your own usage.
 
 ## Update
 
