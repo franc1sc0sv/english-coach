@@ -1,7 +1,7 @@
 import { atom, read, update } from "claude-code";
 import type { EngineInterface, Register } from "claude-code";
 
-import { SYSTEM, isWorthReview, parse, prose } from "../lib/coach.ts";
+import { REWRITE_SYSTEM, SYSTEM, isWorthReview, parse, prose } from "../lib/coach.ts";
 import type { TipKind } from "../types";
 
 const COMMAND = "english-coach";
@@ -9,6 +9,10 @@ const COMMAND = "english-coach";
 const ENABLED_KEY = "enabled";
 
 const MODEL = "claude-haiku-5-5";
+
+const REVIEW_MAX_TOKENS = 500;
+
+const REWRITE_MAX_TOKENS = 4000;
 
 const KIND_LABELS: Record<TipKind, string> = {
   grammar: "Grammar",
@@ -30,20 +34,34 @@ async function isEnabled($: EngineInterface): Promise<boolean> {
 }
 
 async function coach($: EngineInterface, text: string, at: number): Promise<void> {
+  const prompt = prose(text);
   const reply = await $.model.complete({
     model: MODEL,
-    system: [{ text: SYSTEM, cache: true }],
-    prompt: `The prompt they sent:\n<prompt>\n${prose(text)}\n</prompt>`,
-    maxTokens: 1500,
+    system: SYSTEM,
+    prompt,
+    maxTokens: REVIEW_MAX_TOKENS,
     effort: "low",
     timeoutMs: 30000,
   });
 
   if (!reply.isAnswered || at !== epoch) return;
 
-  const found = parse(reply.text);
+  const tips = parse(reply.text);
 
-  if (found !== undefined) await update($, review, () => found);
+  if (tips !== undefined) await update($, review, () => ({ tips, prompt }));
+}
+
+async function rewrite($: EngineInterface, prompt: string): Promise<string | undefined> {
+  const reply = await $.model.complete({
+    model: MODEL,
+    system: REWRITE_SYSTEM,
+    prompt,
+    maxTokens: REWRITE_MAX_TOKENS,
+    effort: "low",
+    timeoutMs: 30000,
+  });
+
+  return reply.isAnswered ? reply.text.trim() : undefined;
 }
 
 export const register: Register = (on) => {
@@ -96,7 +114,15 @@ export const register: Register = (on) => {
     const dismiss = () => update($, review, () => null);
 
     const copy = async () => {
-      await $.ui.copy({ text: shown.rewrite, surface: e.surface });
+      const text = await rewrite($, shown.prompt);
+
+      if (text === undefined || text === "") {
+        $.ui.toast("English coach could not write the rewrite.");
+
+        return;
+      }
+
+      await $.ui.copy({ text, surface: e.surface });
       await update($, review, () => null);
     };
 
@@ -132,15 +158,7 @@ export const register: Register = (on) => {
             ))}
           </Box>
           <Box paddingLeft={2} paddingTop={1} columnGap={2}>
-            {shown.rewrite === "" ? null : (
-              <Button
-                key="copy"
-                label="Copy full rewrite"
-                hotkey="1"
-                plain
-                onPress={copy}
-              />
-            )}
+            <Button key="copy" label="Copy full rewrite" hotkey="1" plain onPress={copy} />
             <Button
               key="dismiss"
               label="Dismiss"

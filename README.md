@@ -17,7 +17,7 @@ Type `y` to add the marketplace, then select the user scope. The mod starts imme
 ## Use
 
 - `/english-coach` turns the tips on or off.
-- Each review is one Haiku 5.5 call on your own usage.
+- Each review is one small Haiku 5.5 call on your own usage. The full rewrite is a second call, made only when you press Copy.
 
 ## Update
 

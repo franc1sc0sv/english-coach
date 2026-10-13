@@ -15,8 +15,9 @@ const REPLY = JSON.stringify({
       why: "Researchment is not a word; say research.",
     },
   ],
-  rewrite: "Let's do some research on that, so we know how the plugin works today.",
 });
+
+const REWRITE = "Let's do some research on that, so we know how the plugin works today.";
 
 const sessionStart = { cwd: "/work", surface: "terminal" as const, isInteractive: true };
 
@@ -71,7 +72,7 @@ function world(on: On) {
 
     const answer: ModelCompleteResult = {
       isAnswered: true,
-      text: REPLY,
+      text: e.system?.startsWith("Rewrite") ? REWRITE : REPLY,
       usage: {
         input_tokens: 1,
         output_tokens: 1,
@@ -123,7 +124,9 @@ test("reviews a long prompt with Haiku and shows the tips above the prompt", asy
   await settle($);
 
   expect(requests[0]!.model).toBe("claude-haiku-5-5");
-  expect(JSON.stringify(requests[0]!.prompt)).toContain("researchment");
+  expect(requests[0]!.prompt).toContain("researchment");
+  expect(requests[0]!.maxTokens).toBe(500);
+  expect(requests.length).toBe(1);
 
   const drawn = textOf(await $.ui.render(band));
   expect(drawn).toContain("make a researchment");
@@ -160,8 +163,8 @@ test("drops a late review once a newer prompt was sent", async ($, on) => {
   expect(textOf(await $.ui.render(band))).toContain(STOCK_TEXT);
 });
 
-test("copy puts the rewrite on the clipboard and clears the band", async ($, on) => {
-  const { copies, reviewed } = world(on);
+test("copy asks for the rewrite only then, copies it and clears the band", async ($, on) => {
+  const { copies, requests, reviewed } = world(on);
   await $.session.start(sessionStart);
   await $.prompt.submit(prompt(LONG_PROMPT));
   await reviewed(1);
@@ -169,9 +172,9 @@ test("copy puts the rewrite on the clipboard and clears the band", async ($, on)
 
   await $.ui.press({ plugin: "english-coach", key: "copy" });
 
-  expect(copies).toEqual([
-    "Let's do some research on that, so we know how the plugin works today.",
-  ]);
+  expect(requests.length).toBe(2);
+  expect(requests[1]!.prompt).toBe(LONG_PROMPT);
+  expect(copies).toEqual([REWRITE]);
   expect(textOf(await $.ui.render(band))).toContain(STOCK_TEXT);
 });
 
