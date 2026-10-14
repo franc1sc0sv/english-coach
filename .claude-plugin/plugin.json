@@ -1,6 +1,6 @@
 {
   "name": "english-coach",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Haiku reviews each long prompt you send and shows English tips above the prompt",
   "types": "./types/index.d.ts"
 }

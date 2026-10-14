@@ -14,7 +14,7 @@ const WHY_CHARS = 80;
 
 const KINDS: readonly TipKind[] = ["grammar", "word", "pronunciation", "clarity"];
 
-export const SYSTEM = `English coach for a Spanish speaker who dictates prompts by voice. Find up to 3 real errors in the prompt: grammar, wrong words or Spanish calques, words the dictation misheard, or unclear phrasing. Ignore code, paths, names, punctuation, capitalization, filler words and casual tone.
+export const SYSTEM = `English coach for a non-native speaker who may dictate prompts by voice. Find up to 3 real errors in the prompt: grammar, wrong words or literal translations from their first language, words the dictation misheard, or unclear phrasing. Ignore code, paths, names, punctuation, capitalization, filler words and casual tone.
 Reply with JSON only:
 {"tips":[{"kind":"grammar|word|pronunciation|clarity","said":"2-5 exact words","better":"the fix","why":"plain reason under 60 chars, no grammar terms"}]}
 No errors: {"tips":[]}`;
